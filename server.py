@@ -8,12 +8,35 @@ PADDLE_SPEED = 5
 BALL_SPEED_X = 4
 BALL_SPEED_Y = 2
 
-def main():
-    pygame.init()
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Ping Pong")
-    clock = pygame.time.Clock()
+def show_menu(screen):
+    font = pygame.font.Font(None, 36)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    return False, False
+                if event.key == pygame.K_2:
+                    return False, True
+                if event.key == pygame.K_3:
+                    return True, True
 
+        screen.fill((0, 0, 0))
+        menu_text = [
+            "1. Jugador vs Jugador",
+            "2. Jugador vs IA",
+            "3. IA vs IA",
+        ]
+        for i, text in enumerate(menu_text):
+            rendered = font.render(text, True, (255, 255, 255))
+            screen.blit(rendered, (80, 120 + i * 40))
+
+        pygame.display.flip()
+
+
+def game_loop(screen, clock, left_ai=False, right_ai=False):
     left_y = HEIGHT // 2 - PADDLE_HEIGHT // 2
     right_y = left_y
     ball_x = WIDTH // 2
@@ -28,14 +51,28 @@ def main():
                 running = False
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            left_y -= PADDLE_SPEED
-        if keys[pygame.K_s]:
-            left_y += PADDLE_SPEED
-        if keys[pygame.K_UP]:
-            right_y -= PADDLE_SPEED
-        if keys[pygame.K_DOWN]:
-            right_y += PADDLE_SPEED
+
+        if left_ai:
+            if ball_y < left_y + PADDLE_HEIGHT / 2:
+                left_y -= PADDLE_SPEED
+            elif ball_y > left_y + PADDLE_HEIGHT / 2:
+                left_y += PADDLE_SPEED
+        else:
+            if keys[pygame.K_w]:
+                left_y -= PADDLE_SPEED
+            if keys[pygame.K_s]:
+                left_y += PADDLE_SPEED
+
+        if right_ai:
+            if ball_y < right_y + PADDLE_HEIGHT / 2:
+                right_y -= PADDLE_SPEED
+            elif ball_y > right_y + PADDLE_HEIGHT / 2:
+                right_y += PADDLE_SPEED
+        else:
+            if keys[pygame.K_UP]:
+                right_y -= PADDLE_SPEED
+            if keys[pygame.K_DOWN]:
+                right_y += PADDLE_SPEED
 
         left_y = max(0, min(HEIGHT - PADDLE_HEIGHT, left_y))
         right_y = max(0, min(HEIGHT - PADDLE_HEIGHT, right_y))
@@ -62,6 +99,16 @@ def main():
 
         pygame.display.flip()
         clock.tick(60)
+
+
+def main():
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Ping Pong")
+    clock = pygame.time.Clock()
+
+    left_ai, right_ai = show_menu(screen)
+    game_loop(screen, clock, left_ai, right_ai)
 
     pygame.quit()
     sys.exit()

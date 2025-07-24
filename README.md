@@ -16,6 +16,14 @@ pip install pygame
 python3 server.py
 ```
 
-Los controles son:
+Al iniciarse, ver\u00e1s un men\u00fa con tres modos de juego:
+
+1. **Jugador vs Jugador**
+2. **Jugador vs IA**
+3. **IA vs IA**
+
+Elige una opci\u00f3n pulsando la tecla correspondiente.
+
+Durante la partida, los controles son:
 - Jugador izquierdo: `W` y `S`
 - Jugador derecho: flechas arriba y abajo
